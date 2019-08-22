@@ -1,0 +1,3 @@
+[submodule "handtracking"]
+	path = handtracking
+	url = https://github.com/victordibia/handtracking.git
