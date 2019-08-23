@@ -12,6 +12,7 @@ SQUARE_SPAWN = (140, 200)
 SQUARE_LENGTH = 40
 BALL_SPAWN = (140, 200)
 BALL_DEFAULT_RADIUS = 20
+GRAVITY = -900
 
 TIP_RADIUS = 30
 TARGET_FRAME_RATE = 24
@@ -34,12 +35,14 @@ class TouchArena:
         ### Init pygame and create screen
         pygame.init()
         self.w, self.h = w, h
+        self.hand_action_cooldown = 0
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.clock = pygame.time.Clock()
+        self.mode = 0
 
         ### Init pymunk and create space
         self.space = pm.Space()
-        self.space.gravity = (0.0, -900.0)
+        self.space.gravity = (0.0, GRAVITY)
         h = self.space.add_collision_handler(COLLTYPE_FINGERTIP, COLLTYPE_FINGERTIP)
         h.begin = no_collide
 
@@ -271,6 +274,25 @@ class TouchArena:
                     pass
                 for poly in self.polys:
                     pass
+
+    def hand_action_triggering(self, persistent_hands):
+        for hand in persistent_hands:
+            if self.hand_action_cooldown > 5:
+                if hand.right > self.w - 40 and hand.top < 40:   # Top right
+                    self.balls.append(self.create_ball(BALL_SPAWN))
+                elif hand.right > self.w - 40 and hand.bottom > self.h - 40:  # Bottom right
+                    self.polys.append(self.create_box(SQUARE_SPAWN))
+                elif hand.left < 40 and hand.top < 40:  # Top left
+                    for poly in self.polys:
+                        self.space.remove(poly, poly.body)
+                    self.polys = []
+                    for ball in self.balls:
+                        self.space.remove(ball, ball.body)
+                    self.balls = []
+                self.hand_action_cooldown = 0
+            else:
+                self.hand_action_cooldown += 1
+
 
     def event_input(self):
         for event in pygame.event.get():

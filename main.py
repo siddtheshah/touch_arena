@@ -58,7 +58,7 @@ try:
         # Update arena using hand info
         arena.add_hands(handset.hands)
 
-
+        arena.hand_action_triggering(handset.hands)
         arena.event_input()
         arena.physics()
         arena.draw(frame)
