@@ -1,0 +1,9 @@
+Tested on Win10, Python 3.6
+
+Pip install pymunk, opencv-python, scipy, numpy, pygame to a virtual environment.
+
+Then run this to get the project.
+
+git clone --recursive https://github.com/siddtheshah/touch_arena
+
+Then run main.py to begin the arena.
